@@ -252,7 +252,27 @@ def getPossibleMoves():
 
     # print("-->",pMoves)
     return pMoves
-F:feü¨rd pf¨$sp^reÿpokds np e
+
+
+def makeMoves():
+    global rekCounter,completedPositions
+    rekCounter = rekCounter +1
+    if isWon():
+        return True
+    else:
+        pMoves = getPossibleMoves()
+        for move in pMoves:
+            if hash(str(active)+str(move)) not in completedPositions:
+                print(rekCounter, end=' --> ')
+                doMove(move)
+                completedPositions.append(hash(str(active)+str(move)))
+
+                # drawPlayGround()
+                if makeMoves():
+                    return True
+
+                undoMove(None)
+
     return False
 
 
