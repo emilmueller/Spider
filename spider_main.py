@@ -32,10 +32,11 @@ marginCardLeft = 5
 selectedCard = (-1, -1)
 targetPile = -1
 
+
+sys.setrecursionlimit(2000)
 print('*********************')
 print(sys.getrecursionlimit())
 print('*********************')
-sys.setrecursionlimit(1500)
 
 # Temp-Containers for Graphics
 
@@ -137,7 +138,7 @@ def placeCard(event):
     movingCards = None
     movingCardsImg = []
     # printPlayGround()
-    print(makeMoves())
+    # print(makeMoves())
 
 
 def chooseCard(event):
@@ -200,12 +201,12 @@ def getPossibleMoves():
                     sourceIndex].getSuit() and \
                         active[tPile][-1].getRank() == active[source][sourceIndex].getRank() + 1:
                     m = [source, sourceIndex, tPile, active[source][sourceIndex:], True, False]
-                    # pMoves.append(m)
-                    if m not in moves:
-                        pMoves.append(m)
-                        suitFound=True
-                    else:
-                        print("***FOUND***",m)
+                    pMoves.append(m)
+                    # if m not in moves:
+                    #     pMoves.append(m)
+                    #     suitFound=True
+                    # else:
+                    #     print("***FOUND***",m)
     # print(sIndices)
     # if not suitFound:
     if True:
@@ -222,12 +223,12 @@ def getPossibleMoves():
                     if len(active[tPile]) > 0 and sourceIndex >= 0 and active[tPile][-1].getRank() == active[source][
                         sourceIndex].getRank() + 1:
                         m = [source, sourceIndex, tPile, active[source][sourceIndex:], True, False]
-                        # pMoves.append(m)
-                        if m not in pMoves:
-                            if m not in moves:
-                                pMoves.append(m)
-                            else:
-                                print("***FOUND***", m)
+                        pMoves.append(m)
+                        # if m not in pMoves:
+                        #     if m not in moves:
+                        #         pMoves.append(m)
+                        #     else:
+                        #         print("***FOUND***", m)
         # if not notSuitFound:
         if True:
             for sPile in range(10):
@@ -241,11 +242,11 @@ def getPossibleMoves():
                         if tPile != source:
                             if len(active[tPile]) == 0:
                                 m = [source, sourceIndex, tPile, active[source][sourceIndex:], True, False]
-                                # pMoves.append(m)
-                                if m not in moves:
-                                    pMoves.append(m)
-                                else:
-                                    print("***FOUND***", m)
+                                pMoves.append(m)
+                                # if m not in moves:
+                                #     pMoves.append(m)
+                                # else:
+                                #     print("***FOUND***", m)
     # deal cards from Stack
     if len(stack) > 0:
         pMoves.append([-2, 0, 0, 0, False])
@@ -254,7 +255,7 @@ def getPossibleMoves():
     return pMoves
 
 
-def makeMoves():
+def makeMoves(event):
     global rekCounter,completedPositions
     rekCounter = rekCounter +1
     if isWon():
@@ -263,22 +264,26 @@ def makeMoves():
         pMoves = getPossibleMoves()
         for move in pMoves:
             if hash(str(active)+str(move)) not in completedPositions:
-                print(rekCounter, end=' --> ')
+                print(rekCounter, " - ",len(stack)//10, end=' --> ')
+                completedPositions.append(hash(str(active) + str(move)))
                 doMove(move)
-                completedPositions.append(hash(str(active)+str(move)))
+
 
                 # drawPlayGround()
-                if makeMoves():
+                if makeMoves(event):
+                    undoMove(None)
                     return True
 
                 undoMove(None)
+            # else:
+            #     print("Move",move,"already TESTED ++++++++++++++++++")
 
     return False
 
 
 def shuffle():
     global stack
-    deck = Card.makeFullStack(2, True)
+    deck = Card.makeFullStack(2, False)
     for i in range(54):
         if i > 43:
             deck[i].turn()
@@ -430,7 +435,7 @@ def doMove(move):
     # [source, target, turn] -->  remove completed suit from pile source to completed[l] (turn indicates wether a card on the pile was turned)
     global moves, won
     print(move)
-    print(hash(str(active)))
+    print(hash(str(active)+str(move)))
     if move[0] == -2:
         # Deal new Cards
         for i in range(10):
@@ -501,5 +506,6 @@ drawPlayGround()
 root.bind('<B1-Motion>', drag)
 root.bind('<Button-1>', chooseCard)
 root.bind('<ButtonRelease-1>', placeCard)
+root.bind('<Button 2>', makeMoves)
 root.bind('<Button 3>', undoMove)
 root.mainloop()
