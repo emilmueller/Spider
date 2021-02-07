@@ -21,6 +21,9 @@ c=Card(3,13)
 c3=Card(0,10)
 c4=Card(3,13)
 
+c=[(3,1),(5,8),(1,10),(9,9),(9,3)]
+print(c.sort(key=lambda x:x[0]))
+
 a = [1,3,4,[c2,c],True]
 b = [1,3,4,[c3,c4], True]
 print(a)
