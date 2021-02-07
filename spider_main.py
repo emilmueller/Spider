@@ -213,18 +213,18 @@ def getPossibleMoves():
         for tPile in range(10):
 
             if tPile != source:
-
-                # print(tPile, len(active[tPile]))
-                if len(active[tPile]) > 0 and sourceIndex >= 0 and active[tPile][-1].getSuit() == active[source][
-                    sourceIndex].getSuit() and \
-                        active[tPile][-1].getRank() == active[source][sourceIndex].getRank() + 1:
-                    m = [source, sourceIndex, tPile, active[source][sourceIndex:], True, False]
-                    tmpMoves.append(m)
-                    # if m not in moves:
-                    #     tmpMoves.append(m)
-                    #     suitFound=True
-                    # else:
-                    #     print("***FOUND***",m)
+                for tmpIndex in range(sourceIndex, len(active[source])):
+                    # print(tPile, len(active[tPile]))
+                    if len(active[tPile]) > 0 and tmpIndex >= 0 and active[tPile][-1].getSuit() == active[source][
+                        tmpIndex].getSuit() and \
+                            active[tPile][-1].getRank() == active[source][tmpIndex].getRank() + 1:
+                        m = [source, tmpIndex, tPile, active[source][tmpIndex:], True, False]
+                        tmpMoves.append(m)
+                        # if m not in moves:
+                        #     tmpMoves.append(m)
+                        #     suitFound=True
+                        # else:
+                        #     print("***FOUND***",m)
     sortMoves(tmpMoves, pMoves, True)
 
     # print(sIndices)
