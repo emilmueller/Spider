@@ -67,7 +67,8 @@ def drag(event):
     mx = event.x
     my = event.y
     movingCardsImg = []
-    if selectedCard[1] != -1:
+
+    if selectedCard[1] >= 0:
         if movingCards is None:
 
             movingCards = active[selectedCard[0]][selectedCard[1]:]
@@ -87,7 +88,7 @@ def drag(event):
 
 def placeCard(event):
     global movingCards, movingCardsImg
-
+    print(selectedCard)
     if dragging:
         targetCol = targetPile[0]
         if len(active[targetCol]) == 0 or movingCards[0].getRank() == active[targetCol][-1].getRank() - 1:
@@ -106,14 +107,22 @@ def placeCard(event):
                 suitFound = False
                 # check for card with same suit
                 for i in range(10):
-                    if len(active[i]) > 0 and active[i][-1].getRank() == active[selectedCard[0]][
-                        selectedCard[1]].getRank() + 1 and active[i][
-                        -1].getSuit() == active[selectedCard[0]][selectedCard[1]].getSuit():
-                        doMove([selectedCard[0], selectedCard[1], i, active[selectedCard[0]][selectedCard[1]:], True,
-                                False])
-                        # removeCards(selectedCard[0], selectedCard[1])
-                        suitFound = True
-                        break
+                    print(i, end='')
+                    try:
+                        if len(active[i]) > 0 and active[i][-1].getRank() == active[selectedCard[0]][
+                            selectedCard[1]].getRank() + 1 and active[i][
+                            -1].getSuit() == active[selectedCard[0]][selectedCard[1]].getSuit():
+                            doMove([selectedCard[0], selectedCard[1], i, active[selectedCard[0]][selectedCard[1]:], True,
+                                    False])
+                            # removeCards(selectedCard[0], selectedCard[1])
+                            suitFound = True
+                            break
+                    except IndexError:
+                        print("i: "+str(i)+" selected: "+str(selectedCard))
+                        print(len(active[i]), end=' ')
+                        print(active[i][-1])
+                        print(active[selectedCard[0]][selectedCard[1]])
+
                 if not suitFound:
                     rankFound = False
                     # check for card with rank -1
@@ -208,6 +217,7 @@ def getPossibleMoves():
         source = sPile
         sourceIndex = sIndex
         sIndices.append(sourceIndex)
+
         # find suited matching moves
 
         for tPile in range(10):
@@ -215,16 +225,20 @@ def getPossibleMoves():
             if tPile != source:
                 for tmpIndex in range(sourceIndex, len(active[source])):
                     # print(tPile, len(active[tPile]))
-                    if len(active[tPile]) > 0 and tmpIndex >= 0 and active[tPile][-1].getSuit() == active[source][
-                        tmpIndex].getSuit() and \
-                            active[tPile][-1].getRank() == active[source][tmpIndex].getRank() + 1:
-                        m = [source, tmpIndex, tPile, active[source][tmpIndex:], True, False]
-                        tmpMoves.append(m)
-                        # if m not in moves:
-                        #     tmpMoves.append(m)
-                        #     suitFound=True
-                        # else:
-                        #     print("***FOUND***",m)
+                    if len(active[tPile]) > 0 and tmpIndex >= 0 and active[tPile][-1].getRank() == active[source][
+                        tmpIndex].getRank() + 1:
+                        if len(active[source]) > 1 and sourceIndex - 1 > 0 and not active[source][
+                            sourceIndex - 1].isShowCard():
+                            m = [source, tmpIndex, tPile, active[source][tmpIndex:], True, False]
+                            tmpMoves.append(m)
+                        elif active[tPile][-1].getSuit() == active[source][tmpIndex].getSuit():
+                            m = [source, tmpIndex, tPile, active[source][tmpIndex:], True, False]
+                            tmpMoves.append(m)
+                            # if m not in moves:
+                            #     tmpMoves.append(m)
+                            #     suitFound=True
+                            # else:
+                            #     print("***FOUND***",m)
     sortMoves(tmpMoves, pMoves, True)
 
     # print(sIndices)
